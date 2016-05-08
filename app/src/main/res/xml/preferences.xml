@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:auto="http://schemas.android.com/apk/res-auto">
+
+    <com.avv.scrumtimer.preference.MyCustomListPreference
+        android:key="ringtone"
+        android:title="Tono"
+        android:summary="Sonido que indica que el turno acaba"
+        android:dialogTitle="Elige un sonido"
+        android:entries="@array/ringtoneTitles"
+        android:entryValues="@array/ringtones" />
+
+    <!--<ListPreference
+        android:key="opcion3"
+        android:title="Preferencia 3"
+        android:summary="Descripción de la preferencia 3"
+        android:dialogTitle="Indicar Pais"
+        android:entries="@array/ringtoneTitles"
+        android:entryValues="@array/ringtones" />-->
+
+</PreferenceScreen>

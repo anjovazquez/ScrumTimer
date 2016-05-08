@@ -1,3 +1,40 @@
 <resources>
     <string name="app_name">ScrumTimer</string>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+
+    <string name="silent">Silent</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="ringtoneTitle">Ringtone</string>
+    <string name="ringtoneSummary">Ringtone: %s</string>
+
+    <string-array name="ringtones">
+        <item>cantina</item>
+        <item>imperialmarch</item>
+        <item>r2d2whistle</item>
+        <item>horse</item>
+    </string-array>
+
+    <string-array name="ringtoneTitles">
+        <item>Cantina</item>
+        <item>Imperial March</item>
+        <item>R2D2</item>
+        <item>Relincho</item>
+    </string-array>
 </resources>
