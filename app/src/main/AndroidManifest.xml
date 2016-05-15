@@ -3,6 +3,7 @@
     package="com.avv.scrumtimer">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -11,16 +12,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DesignDemo">
         <activity
-            android:name=".view.activity.Main2Activity"
-            android:label="@string/title_activity_main2">
+            android:name=".view.activity.SplashActivity"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".preference.SoundPreferences"
-            android:label="@string/app_name">
+        <activity
+            android:name=".view.activity.MainActivity"
+            android:label="@string/title_activity_main">
+        </activity>
+        <activity android:name=".preference.ScrumPreferences"
+            android:parentActivityName=".view.activity.MainActivity"
+            android:label="@string/preferences">
         </activity>
     </application>
 

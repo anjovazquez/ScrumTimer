@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.preference.ListPreference;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 
 import java.io.IOException;
 
@@ -30,7 +31,13 @@ public class MyCustomListPreference extends ListPreference {
     }
 
     private int getValueIndex() {
-        return findIndexOfValue(mValue);
+        int index = findIndexOfValue(mValue=getValue());
+        return index;
+    }
+
+    @Override
+    protected void onBindDialogView(View view) {
+        super.onBindDialogView(view);
     }
 
     @Override
@@ -58,8 +65,8 @@ public class MyCustomListPreference extends ListPreference {
                         dialog.dismiss();
                         */
 
-                        String value = getEntryValues()[which].toString();
-                        Uri uri = uriFromRaw(value);
+                        mValue = getEntryValues()[which].toString();
+                        Uri uri = uriFromRaw(mValue);
 
                         try {
                             playSong(uri);
@@ -86,6 +93,14 @@ public class MyCustomListPreference extends ListPreference {
 
         mMediaPlayer.stop();
         mMediaPlayer.release();
+
+        if (positiveResult && mClickedDialogEntryIndex >= 0 && getEntryValues() != null) {
+            String value = getEntryValues()[mClickedDialogEntryIndex].toString();
+            if (callChangeListener(value)) {
+                setValue(value);
+            }
+        }
+
     }
 
     private void playSong(Uri path) throws IllegalArgumentException,
@@ -96,7 +111,6 @@ public class MyCustomListPreference extends ListPreference {
         mMediaPlayer.reset();
         mMediaPlayer.setDataSource(getContext(), path);
         mMediaPlayer.setAudioStreamType(AudioManager.STREAM_RING);
-//  mMediaPlayer.setLooping(true);
         mMediaPlayer.prepare();
         mMediaPlayer.start();
     }

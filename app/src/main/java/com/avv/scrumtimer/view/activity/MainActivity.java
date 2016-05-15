@@ -13,14 +13,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.avv.scrumtimer.R;
-import com.avv.scrumtimer.preference.SoundPreferences;
+import com.avv.scrumtimer.preference.ScrumPreferences;
 import com.avv.scrumtimer.view.fragment.ConfigurationFragment;
 import com.avv.scrumtimer.view.fragment.CountDownTimerFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class Main2Activity extends AppCompatActivity implements ConfigurationFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements ConfigurationFragment.OnFragmentInteractionListener {
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -36,7 +36,7 @@ public class Main2Activity extends AppCompatActivity implements ConfigurationFra
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -124,8 +124,8 @@ public class Main2Activity extends AppCompatActivity implements ConfigurationFra
         navPreferences.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                startActivity(new Intent(Main2Activity.this,
-                        SoundPreferences.class));
+                startActivity(new Intent(MainActivity.this,
+                        ScrumPreferences.class));
                 return false;
             }
 

@@ -1,6 +1,7 @@
 package com.avv.scrumtimer.view;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -12,11 +13,10 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Vibrator;
+import android.preference.PreferenceManager;
 import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
-
-import com.avv.scrumtimer.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -39,6 +39,8 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
+                text.setColor(Color.BLUE);
+                overtime = 0;
                 if (!isFinished) {
                     if (isStarted) {
                         countDownTimer.cancel();
@@ -49,17 +51,19 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
                         isStarted = true;
                     }
                 } else {
+                    isFinished = false;
                     mMillisUntilFinished = initCountDown;
                     angle = 0;
                     oldAngle = 0;
-                    updateCountDownTimer(mMillisUntilFinished);
-                    countDownTimer.start();
-                    isStarted = true;
-                    isFinished = false;
+                    stopSound(mAlarm);
                 }
             }
         });
-        mAlarm = loadSound(R.raw.r2d2whistle);
+        SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        String ringtone = prefs.getString("ringtone", "r2d2whistle");
+
+        mAlarm = loadSound(getContext().getResources().getIdentifier(ringtone, "raw", getContext().getPackageName()));
     }
 
     private MediaPlayer mAlarm;
@@ -103,6 +107,11 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         text.setTypeface(Typeface.create("Arial", Typeface.BOLD));
 
         setLayerType(LAYER_TYPE_SOFTWARE, null);
+
+        SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        initCountDown = prefs.getLong("timeshift", 60*5*1000);
+        mMillisUntilFinished = initCountDown;
 
         Date date = new Date();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
@@ -212,8 +221,10 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
     class RefreshHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            update();
-            invalidate();
+            if(isFinished) {
+                update();
+                invalidate();
+            }
         }
 
         public void sleep(long delay) {
@@ -300,6 +311,13 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         if (!mp.isPlaying()) {
             mp.setVolume(0.2f, 0.2f);
             mp.start();
+        }
+    }
+
+    private void stopSound(MediaPlayer mp) {
+
+        if (mp.isPlaying()) {
+            mp.stop();
         }
     }
 }

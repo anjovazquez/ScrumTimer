@@ -1,18 +1,23 @@
 package com.avv.scrumtimer.view.fragment;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.avv.scrumtimer.R;
+import com.avv.scrumtimer.view.FontManager;
 
 import butterknife.ButterKnife;
 
 
 public class CountDownTimerFragment extends Fragment {
+
+    protected PowerManager.WakeLock mWakeLock;
 
 
     // TODO: Rename parameter arguments, choose names that match
@@ -53,6 +58,8 @@ public class CountDownTimerFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+
     }
 
     @Override
@@ -60,6 +67,13 @@ public class CountDownTimerFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.countdown_fragment, container, false);
         ButterKnife.bind(this, view);
+        final PowerManager pm = (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
+        this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "countdown");
+        mWakeLock.acquire();
+
+        Typeface iconFont = FontManager.getTypeface(getActivity(), FontManager.FONTAWESOME);
+        FontManager.markAsIconContainer(view.findViewById(R.id.icons_container), iconFont);
+
         return view;
     }
 
@@ -71,5 +85,11 @@ public class CountDownTimerFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onDestroy() {
+        mWakeLock.release();
+        super.onDestroy();
     }
 }

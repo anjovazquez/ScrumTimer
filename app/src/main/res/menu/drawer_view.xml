@@ -4,11 +4,10 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_config"
-            android:title="Opciones" />
+            android:title="@string/participants" />
         <item
             android:id="@+id/nav_prefs"
-            android:title="Sonidos" />
-
+            android:title="@string/preferences" />
     </group>
 
 </menu>

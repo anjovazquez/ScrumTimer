@@ -12,8 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.NumberPicker;
 import android.widget.TextView;
 
 import com.avv.scrumtimer.Participant;
@@ -38,11 +36,7 @@ public class ConfigurationFragment extends Fragment implements ParticipantDialog
 
     @BindView(R.id.participant_list)
     RecyclerView participants;
-    @BindView(R.id.shift)
-    CheckBox shift;
-    @BindView(R.id.shiftTime)
-    NumberPicker shiftTime;
-    @BindView(R.id.shiftTimeMinute) NumberPicker shiftTimeMinute;
+
     @BindView(R.id.fabAddParticipant)
     FloatingActionButton fabAddParticipant;
 
@@ -94,48 +88,15 @@ public class ConfigurationFragment extends Fragment implements ParticipantDialog
         View view = inflater.inflate(R.layout.configuration_fragment, container, false);
         ButterKnife.bind(this, view);
 
-
         loadParticipants();
 
         participants.setAdapter(new ParticipantsAdapter(participantList, R.layout.layout_participant));
         participants.setLayoutManager(new LinearLayoutManager(getActivity()));
         participants.setItemAnimator(new DefaultItemAnimator());
 
-
-        shiftTime.setMinValue(0);
-        String[] hours = loadHourValues();
-        shiftTime.setMaxValue(hours.length-1);
-        shiftTime.setDisplayedValues(hours);
-
-
-        shiftTimeMinute.setMinValue(0);
-        String[] minutes = loadMinuteValues();
-        shiftTimeMinute.setMaxValue(minutes.length-1);
-        shiftTimeMinute.setDisplayedValues(minutes);
-
         fabAddParticipant.setOnClickListener(new AddParticipantListener());
 
         return view;
-    }
-
-    private String[] loadHourValues(){
-        ArrayList<String> list = new ArrayList<String>();
-        for(int i=0;i<11;i++) {
-            list.add(String.format("%02d",i));
-        }
-        String[] hours = new String[list.size()];
-        return list.toArray(hours);
-
-    }
-
-    private String[] loadMinuteValues(){
-        ArrayList<String> list = new ArrayList<String>();
-        for(int i=0;i<59;i=i+5) {
-            list.add(String.format("%02d",i));
-        }
-        String[] minutes = new String[list.size()];
-        return list.toArray(minutes);
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -187,17 +148,20 @@ public class ConfigurationFragment extends Fragment implements ParticipantDialog
             this.itemLayout = itemLayout;
         }
 
-        @Override public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(itemLayout, parent, false);
             return new ViewHolder(v);
         }
 
-        @Override public void onBindViewHolder(ViewHolder holder, int position) {
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
             Participant item = items.get(position);
             holder.text.setText(item.getName());
         }
 
-        @Override public int getItemCount() {
+        @Override
+        public int getItemCount() {
             return items.size();
         }
 

@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:auto="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <com.avv.scrumtimer.preference.MyCustomListPreference
-        android:key="ringtone"
-        android:title="Tono"
-        android:summary="Sonido que indica que el turno acaba"
         android:dialogTitle="Elige un sonido"
         android:entries="@array/ringtoneTitles"
-        android:entryValues="@array/ringtones" />
+        android:entryValues="@array/ringtones"
+        android:key="ringtone"
+        android:summary="Sonido que indica que el turno acaba"
+        android:title="Tono" />
 
-    <!--<ListPreference
-        android:key="opcion3"
-        android:title="Preferencia 3"
-        android:summary="Descripción de la preferencia 3"
-        android:dialogTitle="Indicar Pais"
-        android:entries="@array/ringtoneTitles"
-        android:entryValues="@array/ringtones" />-->
+
+    <com.avv.scrumtimer.preference.NumberPickerPreference
+        android:key="timeshift"
+        android:summary="Tiempo para cada participante"
+        android:title="Tiempo de turno" />
+
+    <CheckBoxPreference
+        android:key="randomshift"
+        android:summary="El orde de participación será aleatorio"
+        android:title="Aleatorio" />
 
 </PreferenceScreen>
