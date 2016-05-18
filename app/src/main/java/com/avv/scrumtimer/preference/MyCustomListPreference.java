@@ -66,14 +66,16 @@ public class MyCustomListPreference extends ListPreference {
                         */
 
                         mValue = getEntryValues()[which].toString();
-                        Uri uri = uriFromRaw(mValue);
+                        if(!"Silent".equalsIgnoreCase(mValue)) {
+                            Uri uri = uriFromRaw(mValue);
 
-                        try {
-                            playSong(uri);
-                        } catch (IllegalStateException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                            try {
+                                playSong(uri);
+                            } catch (IllegalStateException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 });

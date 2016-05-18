@@ -8,6 +8,9 @@
         <item
             android:id="@+id/nav_prefs"
             android:title="@string/preferences" />
+        <item
+            android:id="@+id/nav_results"
+            android:title="@string/results" />
     </group>
 
 </menu>

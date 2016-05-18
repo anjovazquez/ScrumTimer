@@ -14,13 +14,14 @@ import android.view.MenuItem;
 
 import com.avv.scrumtimer.R;
 import com.avv.scrumtimer.preference.ScrumPreferences;
-import com.avv.scrumtimer.view.fragment.ConfigurationFragment;
 import com.avv.scrumtimer.view.fragment.CountDownTimerFragment;
+import com.avv.scrumtimer.view.fragment.ParticipantsFragment;
+import com.avv.scrumtimer.view.fragment.ResultsChartFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements ConfigurationFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements ParticipantsFragment.OnFragmentInteractionListener {
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements ConfigurationFrag
         navOrder.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                ConfigurationFragment newFragment = new ConfigurationFragment();
+                ParticipantsFragment newFragment = ParticipantsFragment.newInstance();
                 Bundle args = new Bundle();
                 //args.putInt(ArticleFragment.ARG_POSITION, position);
                 newFragment.setArguments(args);
@@ -130,6 +131,29 @@ public class MainActivity extends AppCompatActivity implements ConfigurationFrag
             }
 
         });
+
+        MenuItem navResults = navigationView.getMenu().findItem(R.id.nav_results);
+        navResults.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                ResultsChartFragment newFragment = new ResultsChartFragment();
+                Bundle args = new Bundle();
+                //args.putInt(ArticleFragment.ARG_POSITION, position);
+                newFragment.setArguments(args);
+
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                // Replace whatever is in the fragment_container view with this fragment,
+                // and add the transaction to the back stack so the user can navigate back
+                transaction.replace(R.id.fragment_container, newFragment);
+                transaction.addToBackStack(null);
+
+                // Commit the transaction
+                transaction.commit();
+                return false;
+            }
+        });
+
     }
 
 

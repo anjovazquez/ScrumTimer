@@ -9,15 +9,6 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_example">Example action</string>
-
-    <string name="action_settings">Settings</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
-
-
     <string name="silent">Silent</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -26,8 +17,10 @@
 
     <string name="preferences">Preferencias</string>
     <string name="participants">Participantes</string>
+    <string name="results">Resultados</string>
 
     <string-array name="ringtones">
+        <item>silence</item>
         <item>cantina</item>
         <item>imperialmarch</item>
         <item>r2d2whistle</item>
@@ -35,6 +28,7 @@
     </string-array>
 
     <string-array name="ringtoneTitles">
+        <item>Silent</item>
         <item>Cantina</item>
         <item>Imperial March</item>
         <item>R2D2</item>

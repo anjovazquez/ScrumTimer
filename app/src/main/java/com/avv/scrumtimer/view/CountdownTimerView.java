@@ -26,8 +26,42 @@ import java.util.logging.Logger;
 /**
  * Created by angelvazquez on 7/5/16.
  */
-public class CountdownTimerView extends View implements MediaPlayer.OnCompletionListener{
+public class CountdownTimerView extends View implements MediaPlayer.OnCompletionListener, ControlsView {
 
+    Logger logger = Logger.getLogger(getClass().getName());
+
+    private static final int START_ANGLE_POINT = 270;
+    private static final int DEFAULT_SIZE = 150;
+    private static final int DEFAULT_RATE = 15;
+    private static final int DEFAULT_PADDING = 20;
+
+    private int SIZE = DEFAULT_SIZE;
+    private int RATE = DEFAULT_RATE;
+
+    private Paint paint;
+    private Paint outer;
+    private TextPaint text;
+    String dateText;
+    PointF textPoint;
+    boolean isFinished = false;
+    boolean blink = false;
+
+    private float angle = 0;
+    private float oldAngle = 0;
+    private RectF rect;
+
+    private MediaPlayer mAlarm;
+
+    boolean isStarted = false;
+    long initCountDown = 15000;
+    long stepTimeMillis = 100;
+    long mMillisUntilFinished = initCountDown;
+
+    private CountDownTimer countDownTimer;
+    private float overtime = 0;
+
+    Date date = new Date();
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
 
     public CountdownTimerView(Context context) {
         super(context);
@@ -39,50 +73,70 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                text.setColor(Color.BLUE);
-                overtime = 0;
-                if (!isFinished) {
-                    if (isStarted) {
-                        countDownTimer.cancel();
-                        isStarted = false;
-                    } else {
-                        updateCountDownTimer(mMillisUntilFinished);
-                        countDownTimer.start();
-                        isStarted = true;
-                    }
-                } else {
-                    isFinished = false;
-                    mMillisUntilFinished = initCountDown;
-                    angle = 0;
-                    oldAngle = 0;
-                    stopSound(mAlarm);
-                }
+                onCounterAction();
             }
         });
         SharedPreferences prefs =
                 PreferenceManager.getDefaultSharedPreferences(getContext());
         String ringtone = prefs.getString("ringtone", "r2d2whistle");
 
-        mAlarm = loadSound(getContext().getResources().getIdentifier(ringtone, "raw", getContext().getPackageName()));
+        if (!"silence".equals(ringtone))
+            mAlarm = loadSound(getContext().getResources().getIdentifier(ringtone, "raw", getContext().getPackageName()));
     }
 
-    private MediaPlayer mAlarm;
+    private void onCounterAction() {
+        if (isStarted) {
+            countDownTimer.cancel();
+            isStarted = false;
+        } else {
+            updateCountDownTimer(mMillisUntilFinished);
+            countDownTimer.start();
+            isStarted = true;
+        }
+    }
+
+    private void onRestart() {
+        countDownTimer.cancel();
+
+        loadPreferences();
+        text.setColor(Color.BLUE);
+        overtime = 0;
+        isFinished = false;
+        isStarted = false;
+        mMillisUntilFinished = initCountDown;
+        angle = 0;
+        oldAngle = 0;
+        stopSound(mAlarm);
+
+        date.setTime(mMillisUntilFinished);
+        dateText = simpleDateFormat.format(date);
+        invalidate();
+
+
+    }
 
     public CountdownTimerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setAttributes(context, attrs);
-
     }
 
-    private static final int START_ANGLE_POINT = 270;
-
-    private float angle = 0;
-    private float oldAngle = 0;
-    private Paint paint;
-    private Paint outer;
-    private TextPaint text;
-
     private void setAttributes(Context context, AttributeSet attrs) {
+
+        loadPreferences();
+        initPainters();
+
+        date.setTime(mMillisUntilFinished);
+        dateText = simpleDateFormat.format(date);
+    }
+
+    private void loadPreferences() {
+        SharedPreferences prefs =
+                PreferenceManager.getDefaultSharedPreferences(getContext());
+        initCountDown = prefs.getLong("timeshift", 60 * 5 * 1000);
+        mMillisUntilFinished = initCountDown;
+    }
+
+    private void initPainters() {
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.STROKE);
@@ -100,33 +154,12 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         text.setAntiAlias(true);
         text.setColor(Color.BLUE);
         text.setTextSize(150);
-        /*Typeface font = Typeface.createFromAsset(
-                getContext().getAssets(),
-                "fonts/TENOCLOCK-Regular.ttf");
-        text.setTypeface(font);*/
         text.setTypeface(Typeface.create("Arial", Typeface.BOLD));
 
         setLayerType(LAYER_TYPE_SOFTWARE, null);
 
-        SharedPreferences prefs =
-                PreferenceManager.getDefaultSharedPreferences(getContext());
-        initCountDown = prefs.getLong("timeshift", 60*5*1000);
-        mMillisUntilFinished = initCountDown;
 
-        Date date = new Date();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
-        date.setTime(mMillisUntilFinished);
-        dateText = simpleDateFormat.format(date);
     }
-
-    private static final int DEFAULT_SIZE = 150;
-    private static final int DEFAULT_RATE = 15;
-    private static final int DEFAULT_PADDING = 20;
-
-    private int SIZE = DEFAULT_SIZE;
-    private int RATE = DEFAULT_RATE;
-
-    private RectF rect;
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -135,7 +168,6 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         this.setMeasuredDimension(w, h);
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        //make sure square
         if (w > h) {
             SIZE = h;
         } else {
@@ -145,31 +177,34 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         initMeasurements();
     }
 
-    boolean isStarted = false;
-    long initCountDown = 15000;
-    long stepTimeMillis = 100;
-    long mMillisUntilFinished = initCountDown;
-
     private void initMeasurements() {
 
         SIZE -= DEFAULT_PADDING;
 
         final int strokeWidth = SIZE / RATE;
 
-        //animation
         rect = new RectF(strokeWidth / 2 + strokeWidth + DEFAULT_PADDING, strokeWidth / 2 + strokeWidth + DEFAULT_PADDING, SIZE - (strokeWidth / 2 + strokeWidth), SIZE - (strokeWidth / 2 + strokeWidth));
 
         paint.setStrokeWidth(strokeWidth);
         outer.setStrokeWidth(strokeWidth / 2);
-        //text.setTextSize(TEXT_SIZE);
 
         calculateTextPosition();
         updateCountDownTimer(mMillisUntilFinished);
     }
 
+    private void calculateTextPosition() {
+        //Text Size Calculations
+        RectF bounds = new RectF(rect);
+        // measure text width
+        bounds.right = text.measureText("mm:ss", 0, "mm:ss".length());
+        // measure text height
+        bounds.bottom = text.descent() - text.ascent();
+        bounds.left += (rect.width() - bounds.right) / 2.0f;
+        bounds.top += (rect.height() - bounds.bottom) / 2.0f;
 
-    private CountDownTimer countDownTimer;
-    private float overtime = 0;
+        //text
+        textPoint = new PointF(bounds.left, bounds.top - text.ascent());
+    }
 
     private void updateCountDownTimer(final long millis) {
 
@@ -178,13 +213,8 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
 
         countDownTimer = new CountDownTimer(millis, stepTimeMillis) {
 
-
-
             public void onTick(long millisUntilFinished) {
-                //angle = (60 - (float)millisUntilFinished/(float)1000)*((float)360/(float)60);
-                //angle = (600 - millisUntilFinished/100)*((float)360/(float)600);
                 angle = (initCountDown / 100 - millisUntilFinished / stepTimeMillis) * increment;
-
 
                 if (angle > oldAngle) {
                     oldAngle = angle;
@@ -206,13 +236,16 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         };
     }
 
-    Date date = new Date();
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+    /************************************
+     * Overtime count time
+     *****************************************/
+    //Overtime count time
+    private final RefreshHandler mRedrawHandler = new RefreshHandler();
 
     private void update() {
         blink = blink ? false : true;
         overtime = overtime + 0.5f;
-        date.setTime((long)overtime*1000);
+        date.setTime((long) overtime * 1000);
         dateText = simpleDateFormat.format(date);
         text.setColor(Color.RED);
         this.mRedrawHandler.sleep(500);
@@ -221,7 +254,7 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
     class RefreshHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            if(isFinished) {
+            if (isFinished) {
                 update();
                 invalidate();
             }
@@ -232,37 +265,17 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
             this.sendMessageDelayed(this.obtainMessage(0), delay);
         }
     }
+    /************************************    Overtime count time    *****************************************/
 
-    private final RefreshHandler mRedrawHandler = new RefreshHandler();
 
-    Logger logger = Logger.getLogger(getClass().getName());
-
-    String dateText;
-    PointF textPoint;
-    boolean isFinished = false;
-    boolean blink = false;
-
-    private void calculateTextPosition() {
-        //Text Size Calculations
-        RectF bounds = new RectF(rect);
-        // measure text width
-        bounds.right = text.measureText("mm:ss", 0, "mm:ss".length());
-        // measure text height
-        bounds.bottom = text.descent() - text.ascent();
-        bounds.left += (rect.width() - bounds.right) / 2.0f;
-        bounds.top += (rect.height() - bounds.bottom) / 2.0f;
-
-        //text
-        textPoint = new PointF(bounds.left, bounds.top - text.ascent());
-    }
-
+    /************************************
+     * Draw stuff
+     *****************************************/
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         canvas.drawArc(rect, 0, 360, false, outer);
-        //calculateTextPosition();
-
         if (isFinished) {
             if (blink) {
                 canvas.drawText(dateText, textPoint.x, textPoint.y, text);
@@ -272,24 +285,13 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         }
 
         canvas.drawArc(rect, START_ANGLE_POINT, angle, false, paint);
-        //canvas.drawArc(rect2, 0, 360, false, inner);
-
-        /*String secs = mMillisUntilFinished / 1000 + "";
-        if (secs.length() != previousLengthOfText) {
-            calculateTextPosition();
-            previousLengthOfText = secs.length();
-        }*/
-
-        //canvas.drawText(dateText, rect.centerX(), rect.centerX(), text);
     }
+    /************************************    Draw stuff    *****************************************/
 
 
-    /**
-     * Se cargan los sonidos a utilizar
-     *
-     * @param rid
-     * @return
-     */
+    /************************************
+     * Sounds
+     *****************************************/
     private MediaPlayer loadSound(int rid) {
         MediaPlayer mp = MediaPlayer.create(this.getContext(), rid);
         mp.setOnCompletionListener(this);
@@ -301,23 +303,46 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         mp.seekTo(0);
     }
 
-    /**
-     * Se reproduce el sonido elegido
-     *
-     * @param mp
-     */
     private void playSound(MediaPlayer mp) {
-
-        if (!mp.isPlaying()) {
-            mp.setVolume(0.2f, 0.2f);
-            mp.start();
-        }
+        if (mp != null)
+            if (!mp.isPlaying()) {
+                mp.setVolume(0.2f, 0.2f);
+                mp.start();
+            }
     }
 
     private void stopSound(MediaPlayer mp) {
+        if (mp != null)
+            if (mp.isPlaying()) {
+                mp.stop();
+            }
+    }
 
-        if (mp.isPlaying()) {
-            mp.stop();
+    @Override
+    public void play() {
+        onCounterAction();
+    }
+
+    @Override
+    public void pause() {
+        onCounterAction();
+    }
+
+    @Override
+    public long stop() {
+        long totalTime = 0;
+        if(initCountDown - mMillisUntilFinished>=0){
+            totalTime = initCountDown - mMillisUntilFinished;
         }
+        else{
+            totalTime = initCountDown + (long) overtime * 1000;
+        }
+        onRestart();
+        return totalTime;
+    }
+
+    @Override
+    public void next() {
+
     }
 }

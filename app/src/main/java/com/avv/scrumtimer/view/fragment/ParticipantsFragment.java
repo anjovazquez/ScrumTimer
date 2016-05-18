@@ -16,23 +16,17 @@ import android.widget.TextView;
 
 import com.avv.scrumtimer.Participant;
 import com.avv.scrumtimer.R;
+import com.avv.scrumtimer.view.MemoryCache;
+import com.avv.scrumtimer.view.OnRecyclerViewItemClickListener;
 import com.avv.scrumtimer.view.dialog.ParticipantDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link ConfigurationFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link ConfigurationFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class ConfigurationFragment extends Fragment implements ParticipantDialog.ParticipantListener {
+
+public class ParticipantsFragment extends Fragment implements ParticipantDialog.ParticipantListener {
 
     @BindView(R.id.participant_list)
     RecyclerView participants;
@@ -40,35 +34,18 @@ public class ConfigurationFragment extends Fragment implements ParticipantDialog
     @BindView(R.id.fabAddParticipant)
     FloatingActionButton fabAddParticipant;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
-    public ConfigurationFragment() {
+    private ParticipantsAdapter adapter;
+
+    public ParticipantsFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment ConfigurationFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static ConfigurationFragment newInstance(String param1, String param2) {
-        ConfigurationFragment fragment = new ConfigurationFragment();
+
+    public static ParticipantsFragment newInstance() {
+        ParticipantsFragment fragment = new ParticipantsFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,10 +53,6 @@ public class ConfigurationFragment extends Fragment implements ParticipantDialog
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -90,11 +63,19 @@ public class ConfigurationFragment extends Fragment implements ParticipantDialog
 
         loadParticipants();
 
-        participants.setAdapter(new ParticipantsAdapter(participantList, R.layout.layout_participant));
+        adapter = new ParticipantsAdapter(loadParticipants(), R.layout.layout_participant);
+        participants.setAdapter(adapter);
         participants.setLayoutManager(new LinearLayoutManager(getActivity()));
         participants.setItemAnimator(new DefaultItemAnimator());
 
         fabAddParticipant.setOnClickListener(new AddParticipantListener());
+
+        adapter.setOnItemClickListener(new OnRecyclerViewItemClickListener<Participant>() {
+            @Override
+            public void onItemClick(View view, Participant participant) {
+                adapter.remove(participant);
+            }
+        });
 
         return view;
     }
@@ -138,10 +119,12 @@ public class ConfigurationFragment extends Fragment implements ParticipantDialog
         void onFragmentInteraction(Uri uri);
     }
 
-    public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapter.ViewHolder> {
+    public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapter.ViewHolder> implements View.OnClickListener {
 
         private List<Participant> items;
         private int itemLayout;
+
+        private OnRecyclerViewItemClickListener<Participant> itemClickListener;
 
         public ParticipantsAdapter(List<Participant> items, int itemLayout) {
             this.items = items;
@@ -151,18 +134,38 @@ public class ConfigurationFragment extends Fragment implements ParticipantDialog
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(itemLayout, parent, false);
+            v.setOnClickListener(this);
             return new ViewHolder(v);
         }
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             Participant item = items.get(position);
+            holder.itemView.setTag(item);
             holder.text.setText(item.getName());
         }
 
         @Override
         public int getItemCount() {
             return items.size();
+        }
+
+        public void remove(Participant participant){
+            int position = items.indexOf(participant);
+            items.remove(position);
+            notifyItemRemoved(position);
+        }
+
+        public void setOnItemClickListener(OnRecyclerViewItemClickListener<Participant> listener) {
+            this.itemClickListener = listener;
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (itemClickListener != null) {
+                Participant model = (Participant) view.getTag();
+                itemClickListener.onItemClick(view, model);
+            }
         }
 
         public class ViewHolder extends RecyclerView.ViewHolder {
@@ -180,28 +183,18 @@ public class ConfigurationFragment extends Fragment implements ParticipantDialog
         public void onClick(View v) {
             FragmentManager fm = getActivity().getSupportFragmentManager();
             ParticipantDialog participantDialog = new ParticipantDialog();
-            participantDialog.setTargetFragment(ConfigurationFragment.this, 1);
+            participantDialog.setTargetFragment(ParticipantsFragment.this, 1);
             participantDialog.show(fm, "fragment_edit_name");
         }
     }
 
-
-    List<Participant> participantList = new ArrayList<Participant>();
-
     private List<Participant> loadParticipants() {
-
-        participantList.add(new Participant("Lucía"));
-        participantList.add(new Participant("Pablo"));
-        participantList.add(new Participant("Esteban"));
-        participantList.add(new Participant("Javi"));
-        participantList.add(new Participant("Manuel"));
-        return participantList;
+        return MemoryCache.getParticipants(getActivity());
     }
 
     @Override
     public void onAddedParticipantDialog(String inputText) {
-        participantList.add(new Participant(inputText));
-        //participants.setAdapter(participantList);
+        MemoryCache.participants.add(new Participant(inputText));
         participants.getAdapter().notifyDataSetChanged();
     }
 }

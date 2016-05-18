@@ -15,6 +15,7 @@
         tools:context="com.avv.scrumtimer.ShiftCountdownActivity">
 
         <com.avv.scrumtimer.view.CountdownTimerView
+            android:id="@+id/countdowntimer"
             android:layout_width="350dp"
             android:layout_height="350dp"
             android:layout_gravity="center_horizontal" />
@@ -25,18 +26,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="20dp"
-            android:text="Participante N"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/colorPrimary"
             android:textStyle="bold" />
-
-
-        <!--<Button
-            android:id="@+id/timerButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Start/Stop"
-            android:layout_gravity="center"/>-->
 
     </LinearLayout>
 
@@ -50,30 +42,36 @@
         android:gravity="center"
         android:padding="25dp">
 
-        <TextView
+        <Button
+            android:id="@+id/play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fa_play"
             android:textSize="45sp"
             android:textColor="#ffffff"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/control_button"/>
 
-        <TextView
+        <Button
+            android:id="@+id/stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fa_stop"
             android:textSize="45sp"
             android:textColor="#ffffff"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"/>
-        <TextView
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/control_button"/>
+        <Button
+            android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/fa_hand_o_right"
             android:textSize="45sp"
             android:textColor="#ffffff"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"/>
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@drawable/control_button"/>
     </LinearLayout>
 </RelativeLayout>
