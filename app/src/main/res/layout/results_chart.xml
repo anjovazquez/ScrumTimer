@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <org.eazegraph.lib.charts.BarChart
+    <!--<org.eazegraph.lib.charts.BarChart
         android:id="@+id/barchart"
         android:layout_width="match_parent"
         android:layout_height="412dp"
@@ -14,11 +14,17 @@
         egBarWidth="25dp"
         egLegendHeight="0dp"
         egShowValues="true"
-        egEnableScroll="true"
         egShowDecimal="true"
-        egValueUnit="%"
-        egShowBarLabel="true"
-        egLegendColor="#FFFFFF"/>
+        egEnableScroll="true"
+        egShowBarLabel="true"/>-->
+
+    <lecho.lib.hellocharts.view.ColumnChartView
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_gravity="center">
+    </lecho.lib.hellocharts.view.ColumnChartView>
+
 
 
 </FrameLayout>

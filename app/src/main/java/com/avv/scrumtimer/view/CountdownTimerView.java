@@ -18,6 +18,8 @@ import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.avv.scrumtimer.R;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
@@ -70,12 +72,12 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
     public CountdownTimerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setAttributes(context, attrs);
-        setOnClickListener(new OnClickListener() {
+        /*setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 onCounterAction();
             }
-        });
+        });*/
         SharedPreferences prefs =
                 PreferenceManager.getDefaultSharedPreferences(getContext());
         String ringtone = prefs.getString("ringtone", "r2d2whistle");
@@ -99,7 +101,7 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         countDownTimer.cancel();
 
         loadPreferences();
-        text.setColor(Color.BLUE);
+        text.setColor(getResources().getColor(R.color.colorAccent));
         overtime = 0;
         isFinished = false;
         isStarted = false;
@@ -140,7 +142,7 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(Color.BLUE);
+        paint.setColor(getResources().getColor(R.color.colorAccent));
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setStrokeJoin(Paint.Join.ROUND);
 
@@ -152,7 +154,7 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         text = new TextPaint();
         text.setStyle(Paint.Style.FILL);
         text.setAntiAlias(true);
-        text.setColor(Color.BLUE);
+        text.setColor(getResources().getColor(R.color.colorAccent));
         text.setTextSize(150);
         text.setTypeface(Typeface.create("Arial", Typeface.BOLD));
 

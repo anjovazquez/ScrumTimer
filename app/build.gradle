@@ -33,4 +33,5 @@ dependencies {
     compile 'com.github.blackfizz:eazegraph:1.2.5l@aar'
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.github.lecho:hellocharts-library:1.5.8@aar'
 }

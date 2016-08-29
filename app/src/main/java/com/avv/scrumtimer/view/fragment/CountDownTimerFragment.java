@@ -17,6 +17,7 @@ import com.avv.scrumtimer.view.ControlsView;
 import com.avv.scrumtimer.view.FontManager;
 import com.avv.scrumtimer.view.MemoryCache;
 
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,9 +28,6 @@ public class CountDownTimerFragment extends Fragment {
 
     @BindView(R.id.play)
     Button play;
-
-    @BindView(R.id.stop)
-    Button stop;
 
     @BindView(R.id.next)
     Button next;
@@ -44,6 +42,12 @@ public class CountDownTimerFragment extends Fragment {
     private int currentShift;
 
     protected PowerManager.WakeLock mWakeLock;
+
+    private OnCountdownInteractionListener mListener;
+
+    public interface OnCountdownInteractionListener {
+        void onFragmentResultLoad();
+    }
 
     public CountDownTimerFragment() {
         // Required empty public constructor
@@ -92,15 +96,6 @@ public class CountDownTimerFragment extends Fragment {
             }
         });
 
-        stop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isPlaying = false;
-                play.setText(getResources().getString(R.string.fa_play));
-                countDownTimer.stop();
-            }
-        });
-
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,29 +106,51 @@ public class CountDownTimerFragment extends Fragment {
                 currentShift++;
                 if(currentShift<participants.size()){
                     participantShift.setText(participants.get(currentShift).getName());
-                    long totalTime = countDownTimer.stop();
-                    MemoryCache.setResult(currentName, totalTime);
                 }
-                play.setText(getResources().getString(R.string.fa_play));
+                long totalTime = countDownTimer.stop();
+                MemoryCache.setResult(currentName, totalTime);
+                //play.setText(getResources().getString(R.string.fa_play));
+
+
+                if(currentShift == participants.size()){
+                    mListener.onFragmentResultLoad();
+                }
+                else{
+                    isPlaying = true;
+                    //play.setText(getResources().getString(R.string.fa_pause));
+                    countDownTimer.play();
+                }
             }
         });
 
         participants = MemoryCache.getParticipants(getActivity());
+        if(MemoryCache.isRandomShift(getActivity())){
+            Collections.shuffle(participants);
+        }
         currentShift = 0;
         if(currentShift < participants.size()) {
             participantShift.setText(participants.get(currentShift).getName());
         }
+
+        MemoryCache.resetResults();
         return view;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (context instanceof OnCountdownInteractionListener) {
+            mListener = (OnCountdownInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        mListener = null;
     }
 
     @Override

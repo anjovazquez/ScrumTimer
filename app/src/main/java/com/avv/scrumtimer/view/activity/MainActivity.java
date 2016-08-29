@@ -21,7 +21,7 @@ import com.avv.scrumtimer.view.fragment.ResultsChartFragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements ParticipantsFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements ParticipantsFragment.OnFragmentInteractionListener, CountDownTimerFragment.OnCountdownInteractionListener {
 
     /**
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
@@ -136,29 +136,35 @@ public class MainActivity extends AppCompatActivity implements ParticipantsFragm
         navResults.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
-                ResultsChartFragment newFragment = new ResultsChartFragment();
-                Bundle args = new Bundle();
-                //args.putInt(ArticleFragment.ARG_POSITION, position);
-                newFragment.setArguments(args);
-
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                // Replace whatever is in the fragment_container view with this fragment,
-                // and add the transaction to the back stack so the user can navigate back
-                transaction.replace(R.id.fragment_container, newFragment);
-                transaction.addToBackStack(null);
-
-                // Commit the transaction
-                transaction.commit();
+                loadResultFragment();
                 return false;
             }
         });
 
     }
 
+    @Override
+    public void onFragmentResultLoad() {
+        loadResultFragment();
+    }
+
+    private void loadResultFragment(){
+        ResultsChartFragment newFragment = new ResultsChartFragment();
+        Bundle args = new Bundle();
+        newFragment.setArguments(args);
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        transaction.replace(R.id.fragment_container, newFragment);
+        transaction.addToBackStack(null);
+
+        // Commit the transaction
+        transaction.commit();
+    }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-
     }
 }

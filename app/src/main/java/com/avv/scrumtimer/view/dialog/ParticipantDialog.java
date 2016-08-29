@@ -1,9 +1,9 @@
 package com.avv.scrumtimer.view.dialog;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,10 +45,12 @@ public class ParticipantDialog extends DialogFragment implements TextView.OnEdit
                              Bundle savedInstanceState) {
         getDialog().setTitle("Nuevo participante");
         View view = inflater.inflate(R.layout.new_participant_dialog, container);
-        TextView titleView = ((TextView) getDialog().findViewById(android.R.id.title));
-        titleView.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.colorPrimary));
-        titleView.setTextColor(ContextCompat.getColor(getActivity(), R.color.white));
-        titleView.setPadding(10, 10, 10, 10);
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.LOLLIPOP) {
+            TextView titleView = ((TextView) getDialog().findViewById(android.R.id.title));
+            titleView.setBackgroundColor(view.getResources().getColor(R.color.colorPrimary));
+            titleView.setTextColor(view.getResources().getColor(R.color.white));
+            titleView.setPadding(10, 10, 10, 10);
+        }
 
         ButterKnife.bind(this, view);
 

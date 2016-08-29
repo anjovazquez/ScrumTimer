@@ -150,10 +150,19 @@ public class ParticipantsFragment extends Fragment implements ParticipantDialog.
             return items.size();
         }
 
+        public void add(Participant participant){
+            MemoryCache.getParticipants(getActivity());
+            MemoryCache.participants.add(participant);
+            items.add(participant);
+            notifyItemInserted(items.indexOf(participant));
+            MemoryCache.saveParticipants(MemoryCache.participants, getActivity());
+        }
+
         public void remove(Participant participant){
             int position = items.indexOf(participant);
             items.remove(position);
             notifyItemRemoved(position);
+            MemoryCache.saveParticipants(items, getActivity());
         }
 
         public void setOnItemClickListener(OnRecyclerViewItemClickListener<Participant> listener) {
@@ -194,7 +203,7 @@ public class ParticipantsFragment extends Fragment implements ParticipantDialog.
 
     @Override
     public void onAddedParticipantDialog(String inputText) {
-        MemoryCache.participants.add(new Participant(inputText));
-        participants.getAdapter().notifyDataSetChanged();
+        Participant participant = new Participant(inputText);
+        adapter.add(participant);
     }
 }

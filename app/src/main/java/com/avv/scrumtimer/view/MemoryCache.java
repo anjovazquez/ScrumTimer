@@ -2,6 +2,7 @@ package com.avv.scrumtimer.view;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.avv.scrumtimer.Participant;
 import com.google.gson.Gson;
@@ -17,6 +18,7 @@ import java.util.List;
 public class MemoryCache {
 
     public static final String PARTICIPANTS = "Participants";
+    public static final String RANDOM_SHIFT = "randomshift";
 
     public static List<Participant> participants;
     public static HashMap<String, Long> results = new HashMap<String, Long>();
@@ -29,6 +31,8 @@ public class MemoryCache {
 
         editor.putString(PARTICIPANTS, json);
         editor.commit();
+
+        MemoryCache.participants = participants;
     }
 
     public static List<Participant> getParticipants(Context context) {
@@ -44,13 +48,24 @@ public class MemoryCache {
             return participants;
         } else {
             Gson gson = new Gson();
-            return gson.fromJson(json, new TypeToken<List<Participant>>() {
+            MemoryCache.participants = gson.fromJson(json, new TypeToken<List<Participant>>() {
             }.getType());
+            return participants;
         }
     }
 
     public static void setResult(String participant, long time) {
         results.put(participant, time);
+    }
+
+    public static void resetResults() {
+        results.clear();
+    }
+
+    public static boolean isRandomShift(Context context) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getBoolean(RANDOM_SHIFT, false);
     }
 
 

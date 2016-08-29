@@ -33,20 +33,21 @@ public class SplashActivity extends AwesomeSplash {
         //Choose LOGO OR PATH; if you don't provide String value for path it's logo by default
 
         //Customize Logo
-        //configSplash.setLogoSplash(R.drawable.icon_white); //or any other drawable
-        //configSplash.setAnimLogoSplashDuration(1500); //int ms
-        //configSplash.setAnimLogoSplashTechnique(Techniques.Bounce); //choose one form Techniques (ref: https://github.com/daimajia/AndroidViewAnimations)
-
+        configSplash.setLogoSplash(R.drawable.ic_launcher); //or any other drawable
+        configSplash.setAnimLogoSplashDuration(1500); //int ms
+        configSplash.setAnimLogoSplashTechnique(Techniques.RotateIn); //choose one form Techniques (ref: https://github.com/daimajia/AndroidViewAnimations)
+        configSplash.setOriginalHeight(256); //in relation to your svg (path) resource
+        configSplash.setOriginalWidth(256); //in relation to your svg (path) resource
 
         //Customize Path
-        configSplash.setPathSplash(TEST_LOGO); //set path String
+        /**configSplash.setPathSplash(TEST_LOGO); //set path String
         configSplash.setOriginalHeight(256); //in relation to your svg (path) resource
         configSplash.setOriginalWidth(256); //in relation to your svg (path) resource
         configSplash.setAnimPathStrokeDrawingDuration(1500);
         configSplash.setPathSplashStrokeSize(3); //I advise value be <5
         configSplash.setPathSplashStrokeColor(R.color.white); //any color you want form colors.xml
         configSplash.setAnimPathFillingDuration(1500);
-        configSplash.setPathSplashFillColor(R.color.white);
+        configSplash.setPathSplashFillColor(R.color.colorAccent);**/
         //path object filling color
 
 
