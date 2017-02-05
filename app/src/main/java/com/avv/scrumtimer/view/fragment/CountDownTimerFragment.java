@@ -28,7 +28,6 @@ public class CountDownTimerFragment extends Fragment {
 
     @BindView(R.id.play)
     Button play;
-
     @BindView(R.id.next)
     Button next;
 
@@ -49,9 +48,7 @@ public class CountDownTimerFragment extends Fragment {
         void onFragmentResultLoad();
     }
 
-    public CountDownTimerFragment() {
-        // Required empty public constructor
-    }
+    public CountDownTimerFragment() {}
 
     // TODO: Rename and change types and number of parameters
     public static CountDownTimerFragment newInstance() {
@@ -109,7 +106,6 @@ public class CountDownTimerFragment extends Fragment {
                 }
                 long totalTime = countDownTimer.stop();
                 MemoryCache.setResult(currentName, totalTime);
-                //play.setText(getResources().getString(R.string.fa_play));
 
 
                 if(currentShift == participants.size()){
@@ -117,8 +113,7 @@ public class CountDownTimerFragment extends Fragment {
                 }
                 else{
                     isPlaying = true;
-                    //play.setText(getResources().getString(R.string.fa_pause));
-                    countDownTimer.play();
+                    countDownTimer.next();
                 }
             }
         });

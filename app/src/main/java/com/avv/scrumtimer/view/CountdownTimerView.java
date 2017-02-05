@@ -30,8 +30,9 @@ import java.util.logging.Logger;
  */
 public class CountdownTimerView extends View implements MediaPlayer.OnCompletionListener, ControlsView {
 
-    Logger logger = Logger.getLogger(getClass().getName());
+    private Logger logger = Logger.getLogger(getClass().getName());
 
+    //Constants
     private static final int START_ANGLE_POINT = 270;
     private static final int DEFAULT_SIZE = 150;
     private static final int DEFAULT_RATE = 15;
@@ -40,13 +41,22 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
     private int SIZE = DEFAULT_SIZE;
     private int RATE = DEFAULT_RATE;
 
+    protected enum State {
+        PLAYING,
+        PAUSED,
+        FINISHED,
+        FINISHED_PAUSED
+    }
+
+    //Brushes
     private Paint paint;
     private Paint outer;
     private TextPaint text;
-    String dateText;
-    PointF textPoint;
-    boolean isFinished = false;
-    boolean blink = false;
+
+    private PointF textPoint;
+    private String dateText;
+
+    private boolean blink = false;
 
     private float angle = 0;
     private float oldAngle = 0;
@@ -54,16 +64,18 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
 
     private MediaPlayer mAlarm;
 
-    boolean isStarted = false;
-    long initCountDown = 15000;
-    long stepTimeMillis = 100;
-    long mMillisUntilFinished = initCountDown;
+    private long initCountDown = 15000;
+    private long stepTimeMillis = 100;
+    private long mMillisUntilFinished = initCountDown;
 
     private CountDownTimer countDownTimer;
     private float overtime = 0;
 
-    Date date = new Date();
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+    private Date innerDate = new Date();
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss");
+
+    private State innerState = State.PAUSED;
+    private String ringtone;
 
     public CountdownTimerView(Context context) {
         super(context);
@@ -72,49 +84,52 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
     public CountdownTimerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setAttributes(context, attrs);
-        /*setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCounterAction();
-            }
-        });*/
         SharedPreferences prefs =
                 PreferenceManager.getDefaultSharedPreferences(getContext());
-        String ringtone = prefs.getString("ringtone", "r2d2whistle");
+        ringtone = prefs.getString("ringtone", "r2d2whistle");
 
         if (!"silence".equals(ringtone))
             mAlarm = loadSound(getContext().getResources().getIdentifier(ringtone, "raw", getContext().getPackageName()));
     }
 
     private void onCounterAction() {
-        if (isStarted) {
-            countDownTimer.cancel();
-            isStarted = false;
+        if (innerState == State.FINISHED) {
+            mRedrawHandler.removeCallbacksAndMessages(null);
+            innerState = State.FINISHED_PAUSED;
+            stopSound();
         } else {
-            updateCountDownTimer(mMillisUntilFinished);
-            countDownTimer.start();
-            isStarted = true;
+            if (innerState == State.FINISHED_PAUSED) {
+                innerState = State.FINISHED;
+                mRedrawHandler.sleep(500);
+            } else {
+                if (innerState == State.PLAYING) {
+                    countDownTimer.cancel();
+                    innerState = State.PAUSED;
+                } else {
+                    if (innerState == State.PAUSED) {
+                        innerState = State.PLAYING;
+                        updateCountDownTimer(mMillisUntilFinished);
+                        countDownTimer.start();
+                    }
+                }
+            }
         }
     }
 
     private void onRestart() {
         countDownTimer.cancel();
-
+        innerState = State.PLAYING;
         loadPreferences();
         text.setColor(getResources().getColor(R.color.colorAccent));
         overtime = 0;
-        isFinished = false;
-        isStarted = false;
         mMillisUntilFinished = initCountDown;
         angle = 0;
         oldAngle = 0;
-        stopSound(mAlarm);
+        stopSound();
 
-        date.setTime(mMillisUntilFinished);
-        dateText = simpleDateFormat.format(date);
+        innerDate.setTime(mMillisUntilFinished);
+        dateText = simpleDateFormat.format(innerDate);
         invalidate();
-
-
     }
 
     public CountdownTimerView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -127,8 +142,8 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         loadPreferences();
         initPainters();
 
-        date.setTime(mMillisUntilFinished);
-        dateText = simpleDateFormat.format(date);
+        innerDate.setTime(mMillisUntilFinished);
+        dateText = simpleDateFormat.format(innerDate);
     }
 
     private void loadPreferences() {
@@ -159,8 +174,6 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         text.setTypeface(Typeface.create("Arial", Typeface.BOLD));
 
         setLayerType(LAYER_TYPE_SOFTWARE, null);
-
-
     }
 
     @Override
@@ -220,8 +233,8 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
 
                 if (angle > oldAngle) {
                     oldAngle = angle;
-                    date.setTime(millisUntilFinished);
-                    dateText = simpleDateFormat.format(date);
+                    innerDate.setTime(millisUntilFinished);
+                    dateText = simpleDateFormat.format(innerDate);
                     mMillisUntilFinished = millisUntilFinished;
                     logger.log(Level.INFO, angle + "");
                     invalidate();
@@ -229,9 +242,9 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
             }
 
             public void onFinish() {
-                isFinished = true;
+                innerState = State.FINISHED;
                 update();
-                playSound(mAlarm);
+                playSound();
                 Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
                 v.vibrate(new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500}, -1);
             }
@@ -247,8 +260,8 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
     private void update() {
         blink = blink ? false : true;
         overtime = overtime + 0.5f;
-        date.setTime((long) overtime * 1000);
-        dateText = simpleDateFormat.format(date);
+        innerDate.setTime((long) overtime * 1000);
+        dateText = simpleDateFormat.format(innerDate);
         text.setColor(Color.RED);
         this.mRedrawHandler.sleep(500);
     }
@@ -256,7 +269,7 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
     class RefreshHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
-            if (isFinished) {
+            if (innerState == State.FINISHED) {
                 update();
                 invalidate();
             }
@@ -278,7 +291,7 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         super.onDraw(canvas);
 
         canvas.drawArc(rect, 0, 360, false, outer);
-        if (isFinished) {
+        if (innerState == State.FINISHED) {
             if (blink) {
                 canvas.drawText(dateText, textPoint.x, textPoint.y, text);
             }
@@ -294,8 +307,10 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
     /************************************
      * Sounds
      *****************************************/
+
+    private MediaPlayer mp;
     private MediaPlayer loadSound(int rid) {
-        MediaPlayer mp = MediaPlayer.create(this.getContext(), rid);
+        mp = MediaPlayer.create(this.getContext(), rid);
         mp.setOnCompletionListener(this);
         return mp;
     }
@@ -305,15 +320,17 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
         mp.seekTo(0);
     }
 
-    private void playSound(MediaPlayer mp) {
-        if (mp != null)
+    private void playSound() {
+        if (mp != null) {
+            mAlarm = loadSound(getContext().getResources().getIdentifier(ringtone, "raw", getContext().getPackageName()));
             if (!mp.isPlaying()) {
                 mp.setVolume(0.2f, 0.2f);
                 mp.start();
             }
+        }
     }
 
-    private void stopSound(MediaPlayer mp) {
+    private void stopSound() {
         if (mp != null)
             if (mp.isPlaying()) {
                 mp.stop();
@@ -333,10 +350,9 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
     @Override
     public long stop() {
         long totalTime = 0;
-        if(initCountDown - mMillisUntilFinished>=0){
+        if (initCountDown - mMillisUntilFinished >= 0) {
             totalTime = initCountDown - mMillisUntilFinished;
-        }
-        else{
+        } else {
             totalTime = initCountDown + (long) overtime * 1000;
         }
         onRestart();
@@ -345,6 +361,8 @@ public class CountdownTimerView extends View implements MediaPlayer.OnCompletion
 
     @Override
     public void next() {
-
+        innerState = State.PLAYING;
+        updateCountDownTimer(mMillisUntilFinished);
+        countDownTimer.start();
     }
 }
