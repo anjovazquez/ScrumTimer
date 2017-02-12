@@ -1,4 +1,4 @@
-package com.avv.scrumtimer.participants;
+package com.avv.scrumtimer.participants.listeners;
 
 import android.view.View;
 

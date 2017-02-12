@@ -14,7 +14,7 @@ import android.view.MenuItem;
 
 import com.avv.scrumtimer.preference.ScrumPreferences;
 import com.avv.scrumtimer.timer.CountDownTimerFragment;
-import com.avv.scrumtimer.participants.ParticipantsFragment;
+import com.avv.scrumtimer.participants.view.ParticipantsFragment;
 import com.avv.scrumtimer.results.ResultsChartFragment;
 
 import butterknife.BindView;
