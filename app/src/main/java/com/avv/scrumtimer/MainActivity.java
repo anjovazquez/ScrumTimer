@@ -1,4 +1,4 @@
-package com.avv.scrumtimer.view.activity;
+package com.avv.scrumtimer;
 
 
 import android.content.Intent;
@@ -12,11 +12,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-import com.avv.scrumtimer.R;
 import com.avv.scrumtimer.preference.ScrumPreferences;
-import com.avv.scrumtimer.view.fragment.CountDownTimerFragment;
-import com.avv.scrumtimer.view.fragment.ParticipantsFragment;
-import com.avv.scrumtimer.view.fragment.ResultsChartFragment;
+import com.avv.scrumtimer.timer.CountDownTimerFragment;
+import com.avv.scrumtimer.participants.ParticipantsFragment;
+import com.avv.scrumtimer.results.ResultsChartFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

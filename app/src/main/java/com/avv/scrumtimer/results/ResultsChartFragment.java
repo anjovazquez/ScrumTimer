@@ -1,4 +1,4 @@
-package com.avv.scrumtimer.view.fragment;
+package com.avv.scrumtimer.results;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.avv.scrumtimer.R;
-import com.avv.scrumtimer.view.MemoryCache;
+import com.avv.scrumtimer.data.MemoryCache;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -1,4 +1,4 @@
-package com.avv.scrumtimer.view.fragment;
+package com.avv.scrumtimer.participants;
 
 import android.content.Context;
 import android.net.Uri;
@@ -14,11 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.avv.scrumtimer.Participant;
 import com.avv.scrumtimer.R;
-import com.avv.scrumtimer.view.MemoryCache;
-import com.avv.scrumtimer.view.OnRecyclerViewItemClickListener;
-import com.avv.scrumtimer.view.dialog.ParticipantDialog;
+import com.avv.scrumtimer.data.MemoryCache;
+import com.avv.scrumtimer.participants.dialog.ParticipantDialog;
 
 import java.util.List;
 
@@ -35,7 +33,6 @@ public class ParticipantsFragment extends Fragment implements ParticipantDialog.
     FloatingActionButton fabAddParticipant;
 
     private OnFragmentInteractionListener mListener;
-
     private ParticipantsAdapter adapter;
 
     public ParticipantsFragment() {
@@ -76,7 +73,6 @@ public class ParticipantsFragment extends Fragment implements ParticipantDialog.
                 adapter.remove(participant);
             }
         });
-
         return view;
     }
 

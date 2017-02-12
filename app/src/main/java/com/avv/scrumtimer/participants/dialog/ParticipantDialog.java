@@ -1,4 +1,4 @@
-package com.avv.scrumtimer.view.dialog;
+package com.avv.scrumtimer.participants.dialog;
 
 import android.content.Context;
 import android.os.Build;

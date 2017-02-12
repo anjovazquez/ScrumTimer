@@ -1,10 +1,10 @@
-package com.avv.scrumtimer.view;
+package com.avv.scrumtimer.data;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import com.avv.scrumtimer.Participant;
+import com.avv.scrumtimer.participants.Participant;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

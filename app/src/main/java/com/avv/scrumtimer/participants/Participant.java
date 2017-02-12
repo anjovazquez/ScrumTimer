@@ -1,4 +1,4 @@
-package com.avv.scrumtimer;
+package com.avv.scrumtimer.participants;
 
 /**
  * Created by angelvazquez on 4/5/16.

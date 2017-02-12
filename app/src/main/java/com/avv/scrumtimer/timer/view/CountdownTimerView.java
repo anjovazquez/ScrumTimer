@@ -1,4 +1,4 @@
-package com.avv.scrumtimer.view;
+package com.avv.scrumtimer.timer.view;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -19,6 +19,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.avv.scrumtimer.R;
+import com.avv.scrumtimer.timer.view.ControlsView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

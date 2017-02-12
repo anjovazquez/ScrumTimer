@@ -1,8 +1,9 @@
-package com.avv.scrumtimer.view.activity;
+package com.avv.scrumtimer.splash;
 
 import android.content.Intent;
 
 import com.avv.scrumtimer.R;
+import com.avv.scrumtimer.MainActivity;
 import com.daimajia.androidanimations.library.Techniques;
 import com.viksaa.sssplash.lib.activity.AwesomeSplash;
 import com.viksaa.sssplash.lib.cnst.Flags;

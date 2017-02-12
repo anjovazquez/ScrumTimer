@@ -14,7 +14,7 @@
         android:paddingTop="@dimen/activity_vertical_margin"
         tools:context="com.avv.scrumtimer.ShiftCountdownActivity">
 
-        <com.avv.scrumtimer.view.CountdownTimerView
+        <com.avv.scrumtimer.timer.view.CountdownTimerView
             android:id="@+id/countdowntimer"
             android:layout_width="350dp"
             android:layout_height="350dp"

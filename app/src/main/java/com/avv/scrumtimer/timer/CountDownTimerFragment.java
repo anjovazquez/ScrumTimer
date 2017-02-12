@@ -1,4 +1,4 @@
-package com.avv.scrumtimer.view.fragment;
+package com.avv.scrumtimer.timer;
 
 import android.content.Context;
 import android.graphics.Typeface;
@@ -11,11 +11,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.avv.scrumtimer.Participant;
+import com.avv.scrumtimer.participants.Participant;
 import com.avv.scrumtimer.R;
-import com.avv.scrumtimer.view.ControlsView;
-import com.avv.scrumtimer.view.FontManager;
-import com.avv.scrumtimer.view.MemoryCache;
+import com.avv.scrumtimer.timer.view.ControlsView;
+import com.avv.scrumtimer.fonts.FontManager;
+import com.avv.scrumtimer.data.MemoryCache;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.avv.scrumtimer.view;
+package com.avv.scrumtimer.fonts;
 
 import android.content.Context;
 import android.graphics.Typeface;

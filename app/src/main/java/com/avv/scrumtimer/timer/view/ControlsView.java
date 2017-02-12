@@ -1,4 +1,4 @@
-package com.avv.scrumtimer.view;
+package com.avv.scrumtimer.timer.view;
 
 /**
  * Created by angelvazquez on 15/5/16.
