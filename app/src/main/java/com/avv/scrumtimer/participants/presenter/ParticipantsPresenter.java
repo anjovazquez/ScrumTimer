@@ -22,24 +22,24 @@ public class ParticipantsPresenter implements Presenter {
         this.participantsView = participantsView;
     }
 
-    public void loadParticipants(){
-        List<Participant> participantsList = MemoryCache.getParticipants(participantsView.getContext());
+    public void loadParticipants(String groupName){
+        List<Participant> participantsList = MemoryCache.getParticipants(groupName, participantsView.getContext());
         participantsView.onParticipantsListLoaded(participantsList);
     }
 
-    public void addParticipant(Participant participant){
-        MemoryCache.getParticipants(participantsView.getContext());
+    public void addParticipant(String groupName, Participant participant){
+        MemoryCache.getParticipants(groupName, participantsView.getContext());
         MemoryCache.participants.add(participant);
-        MemoryCache.saveParticipants(MemoryCache.participants, participantsView.getContext());
+        MemoryCache.saveParticipants(groupName, MemoryCache.participants, participantsView.getContext());
         participantsView.onParticipantsListLoaded(MemoryCache.participants);
     }
 
-    public void removeParticipant(Participant participant){
-        MemoryCache.getParticipants(participantsView.getContext());
+    public void removeParticipant(String groupName, Participant participant){
+        MemoryCache.getParticipants(groupName, participantsView.getContext());
         for(int i=0;i<MemoryCache.participants.size();i++){
             if(participant.getName().equalsIgnoreCase(MemoryCache.participants.get(i).getName())){
                 MemoryCache.participants.remove(i);
-                MemoryCache.saveParticipants(MemoryCache.participants,  participantsView.getContext());
+                MemoryCache.saveParticipants(groupName,MemoryCache.participants,  participantsView.getContext());
             }
         }
         participantsView.onParticipantsListLoaded(MemoryCache.participants);

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/participant_container"
+    android:id="@+id/participant_group_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -13,7 +12,7 @@
     tools:context="com.avv.scrumtimer.MainActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/participant_list"
+        android:id="@+id/participant_group_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
@@ -28,14 +27,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:text="@string/fa_user_plus"
+            android:text="@string/fa_groups"
             android:textSize="50sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/emptyUser"
+            android:text="@string/emptyGroup"
             android:textSize="18sp" />
     </LinearLayout>
-
 </FrameLayout>

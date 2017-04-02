@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.avv.scrumtimer.R;
-import com.avv.scrumtimer.data.MemoryCache;
 import com.avv.scrumtimer.participants.Participant;
 import com.avv.scrumtimer.participants.listeners.OnRecyclerViewItemClickListener;
 import com.avv.scrumtimer.participants.view.ParticipantsFragment;

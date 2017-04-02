@@ -27,7 +27,6 @@ public class ScrumPreferences extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final android.support.v7.app.ActionBar ab = getSupportActionBar();
-        //ab.setHomeAsUpIndicator(android.R.drawable.;
         ab.setDisplayHomeAsUpEnabled(true);
 
         getFragmentManager().beginTransaction().replace(R.id.fragment_container, new MyPreferenceFragment()).commit();

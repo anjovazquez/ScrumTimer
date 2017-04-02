@@ -4,4 +4,7 @@
     <string name="fa_pause">&#xf04c;</string>
     <string name="fa_stop">&#xf04d;</string>
     <string name="fa_hand_o_right">&#xf0a4;</string>
+    <string name="fa_check">&#xf00c;</string>
+    <string name="fa_groups">&#xf0c0;</string>
+    <string name="fa_user_plus">&#xf234;</string>
 </resources>

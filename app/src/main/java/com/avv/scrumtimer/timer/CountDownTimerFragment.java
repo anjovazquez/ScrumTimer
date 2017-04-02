@@ -13,9 +13,10 @@ import android.widget.TextView;
 
 import com.avv.scrumtimer.participants.Participant;
 import com.avv.scrumtimer.R;
+import com.avv.scrumtimer.timer.presenter.CountDownTimerPresenter;
 import com.avv.scrumtimer.timer.view.ControlsView;
 import com.avv.scrumtimer.fonts.FontManager;
-import com.avv.scrumtimer.data.MemoryCache;
+import com.avv.scrumtimer.timer.view.CountDownView;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +25,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class CountDownTimerFragment extends Fragment {
+public class CountDownTimerFragment extends Fragment implements CountDownView {
 
     @BindView(R.id.play)
     Button play;
@@ -58,18 +59,27 @@ public class CountDownTimerFragment extends Fragment {
         return fragment;
     }
 
+
+    private CountDownTimerPresenter presenter;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        presenter = new CountDownTimerPresenter();
+        presenter.setView(this);
     }
 
     boolean isPlaying = false;
+
+    private String groupName;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.countdown_fragment, container, false);
         ButterKnife.bind(this, view);
+
+        groupName = getArguments().getString("groupName");
 
         final PowerManager pm = (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
         this.mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "countdown");
@@ -105,7 +115,7 @@ public class CountDownTimerFragment extends Fragment {
                     participantShift.setText(participants.get(currentShift).getName());
                 }
                 long totalTime = countDownTimer.stop();
-                MemoryCache.setResult(currentName, totalTime);
+                presenter.saveResult(currentName, totalTime);
 
 
                 if(currentShift == participants.size()){
@@ -118,16 +128,13 @@ public class CountDownTimerFragment extends Fragment {
             }
         });
 
-        participants = MemoryCache.getParticipants(getActivity());
-        if(MemoryCache.isRandomShift(getActivity())){
-            Collections.shuffle(participants);
-        }
+        participants = presenter.getParticipants(groupName);
         currentShift = 0;
         if(currentShift < participants.size()) {
             participantShift.setText(participants.get(currentShift).getName());
         }
 
-        MemoryCache.resetResults();
+        presenter.resetResults();
         return view;
     }
 
@@ -152,5 +159,10 @@ public class CountDownTimerFragment extends Fragment {
     public void onDestroy() {
         mWakeLock.release();
         super.onDestroy();
+    }
+
+    @Override
+    public Context getContext() {
+        return getActivity();
     }
 }

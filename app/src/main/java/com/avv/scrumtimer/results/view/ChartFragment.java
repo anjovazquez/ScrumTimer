@@ -1,4 +1,4 @@
-package com.avv.scrumtimer.results;
+package com.avv.scrumtimer.results.view;
 
 import android.support.v4.app.Fragment;
 

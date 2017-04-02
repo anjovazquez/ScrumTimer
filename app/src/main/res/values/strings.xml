@@ -17,7 +17,12 @@
 
     <string name="preferences">Preferencias</string>
     <string name="participants">Participantes</string>
+    <string name="timer">Comenzar!</string>>
     <string name="results">Resultados</string>
+
+    <string name="emptyGroup">Añada nuevo grupo</string>
+    <string name="emptyUser">Añada usuarios</string>
+
 
     <string-array name="ringtones">
         <item>silence</item>
